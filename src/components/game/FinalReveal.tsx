@@ -7,7 +7,7 @@ const FinalReveal = () => {
   const [confetti, setConfetti] = useState<Array<{ id: number; left: string; delay: string; rotation: number }>>([]);
   const [typedText, setTypedText] = useState('');
   
-  const fullText = "You unlocked the final question 💕";
+  const fullText = "You unlocked the final question!";
 
   // Typewriter effect
   useEffect(() => {
@@ -84,7 +84,7 @@ const FinalReveal = () => {
             {/* Main question */}
             <div className="pixel-panel mb-8 animate-bounce-in">
               <h1 className="text-lg md:text-2xl text-primary pixel-text leading-relaxed animate-heart-beat">
-                Will you be my Valentine?
+                Teiah, will you be my Valentine ?
               </h1>
               
               {/* Decorative hearts */}
@@ -128,11 +128,11 @@ const FinalReveal = () => {
               
               {/* Final message */}
               <h2 className="text-lg md:text-xl text-primary pixel-text mb-4">
-                Best decision ever 💘
+                Good choice
               </h2>
               
               <p className="text-xs text-muted-foreground pixel-text">
-                I love you more than all the hearts in this game
+                I love you to the moon and back Teiah
               </p>
 
               {/* Floating hearts decoration */}
