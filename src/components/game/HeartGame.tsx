@@ -1,10 +1,14 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import heartImage from '@/assets/heart.png';
-import characterIdle from '@/assets/character-idle.gif';
+import characterStandNorth from '@/assets/character-stand-north.png';
+import characterStandSouth from '@/assets/character-stand-south.png';
+import characterStandEast from '@/assets/character-stand-east.png';
+import characterStandWest from '@/assets/character-stand-west.png';
 import characterWalkNorth from '@/assets/character-walk-north.gif';
 import characterWalkSouth from '@/assets/character-walk-south.gif';
 import characterWalkEast from '@/assets/character-walk-east.gif';
 import characterWalkWest from '@/assets/character-walk-west.gif';
+import TriviaDialog from './TriviaDialog';
 
 interface HeartGameProps {
   onComplete: () => void;
@@ -24,48 +28,134 @@ interface Sparkle {
   y: number;
 }
 
-type Direction = 'idle' | 'up' | 'down' | 'left' | 'right';
+interface TriviaQuestion {
+  question: string;
+  options: string[];
+  correctIndex: number;
+}
 
-const GAME_WIDTH = 320;
-const GAME_HEIGHT = 280;
-const CHARACTER_SIZE = 32;
-const HEART_SIZE = 24;
-const MOVE_SPEED = 4;
-const COLLECTION_DISTANCE = 28;
+type Direction = 'up' | 'down' | 'left' | 'right';
+
+// Larger game area and sprites
+const GAME_WIDTH = 480;
+const GAME_HEIGHT = 400;
+const CHARACTER_SIZE = 64;
+const HEART_SIZE = 40;
+const COLLECTION_DISTANCE = 48;
+
+// Slower, step-based movement
+const STEP_SIZE = 4;
+const STEP_INTERVAL = 60; // ms between steps
+
+const triviaQuestions: TriviaQuestion[] = [
+  {
+    question: "Where was our first date?",
+    options: ["Coffee shop downtown", "The park by the lake", "That cozy restaurant", "Movie theater"],
+    correctIndex: 2,
+  },
+  {
+    question: "Who said 'I love you' first?",
+    options: ["You did 💕", "I did 💖", "We said it together", "We haven't yet!"],
+    correctIndex: 0,
+  },
+  {
+    question: "What's our favorite thing to do together?",
+    options: ["Watch movies", "Cook dinner", "Go on walks", "Play games"],
+    correctIndex: 1,
+  },
+  {
+    question: "Which of these reminds you of me most?",
+    options: ["Warm hugs", "Silly jokes", "Late night talks", "All of the above 💘"],
+    correctIndex: 3,
+  },
+  {
+    question: "What's our song?",
+    options: ["That one we danced to", "The one from our road trip", "We don't have one yet", "Every song is ours 💕"],
+    correctIndex: 3,
+  },
+  {
+    question: "What makes our time together special?",
+    options: ["The laughter", "The comfort", "The adventures", "Everything 💖"],
+    correctIndex: 3,
+  },
+  {
+    question: "What's my favorite thing about you?",
+    options: ["Your smile", "Your kindness", "Your sense of humor", "Everything! 💘"],
+    correctIndex: 3,
+  },
+  {
+    question: "How do you make me feel?",
+    options: ["Happy", "Safe", "Loved", "All of the above 💕"],
+    correctIndex: 3,
+  },
+];
 
 const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
-  const [playerPos, setPlayerPos] = useState({ x: GAME_WIDTH / 2 - CHARACTER_SIZE / 2, y: GAME_HEIGHT / 2 - CHARACTER_SIZE / 2 });
+  const [playerPos, setPlayerPos] = useState({ 
+    x: GAME_WIDTH / 2 - CHARACTER_SIZE / 2, 
+    y: GAME_HEIGHT / 2 - CHARACTER_SIZE / 2 
+  });
   const [hearts, setHearts] = useState<Heart[]>([]);
   const [collectedCount, setCollectedCount] = useState(0);
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
-  const [direction, setDirection] = useState<Direction>('idle');
+  const [direction, setDirection] = useState<Direction>('down');
+  const [isMoving, setIsMoving] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [currentTrivia, setCurrentTrivia] = useState<TriviaQuestion | null>(null);
+  const [triviaIndex, setTriviaIndex] = useState(0);
+  const [collectionPause, setCollectionPause] = useState(false);
   
   const keysPressed = useRef<Set<string>>(new Set());
+  const lastMoveTime = useRef<number>(0);
   const gameLoopRef = useRef<number>();
   const sparkleIdRef = useRef(0);
 
-  // Get character sprite based on direction
+  // Get character sprite based on direction and movement state
   const getCharacterSprite = () => {
+    if (isMoving) {
+      switch (direction) {
+        case 'up': return characterWalkNorth;
+        case 'down': return characterWalkSouth;
+        case 'left': return characterWalkWest;
+        case 'right': return characterWalkEast;
+      }
+    }
+    // Standing sprites when idle
     switch (direction) {
-      case 'up': return characterWalkNorth;
-      case 'down': return characterWalkSouth;
-      case 'left': return characterWalkWest;
-      case 'right': return characterWalkEast;
-      default: return characterIdle;
+      case 'up': return characterStandNorth;
+      case 'down': return characterStandSouth;
+      case 'left': return characterStandWest;
+      case 'right': return characterStandEast;
     }
   };
 
-  // Initialize hearts
+  // Initialize hearts with better spacing
   useEffect(() => {
     setMounted(true);
     const initialHearts: Heart[] = [];
+    const padding = HEART_SIZE * 2;
+    
     for (let i = 0; i < requiredHearts; i++) {
+      let x, y;
+      let attempts = 0;
+      do {
+        x = Math.random() * (GAME_WIDTH - padding * 2) + padding;
+        y = Math.random() * (GAME_HEIGHT - padding * 2) + padding;
+        attempts++;
+      } while (
+        attempts < 50 && 
+        initialHearts.some(h => 
+          Math.abs(h.x - x) < HEART_SIZE * 1.5 && 
+          Math.abs(h.y - y) < HEART_SIZE * 1.5
+        )
+      );
+      
       initialHearts.push({
         id: i,
-        x: Math.random() * (GAME_WIDTH - HEART_SIZE * 2) + HEART_SIZE,
-        y: Math.random() * (GAME_HEIGHT - HEART_SIZE * 2) + HEART_SIZE,
+        x,
+        y,
         collected: false,
       });
     }
@@ -81,8 +171,25 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
     }, 600);
   }, []);
 
+  // Show trivia after heart collection
+  const showTrivia = useCallback(() => {
+    if (triviaIndex < triviaQuestions.length) {
+      setCurrentTrivia(triviaQuestions[triviaIndex]);
+      setIsPaused(true);
+    }
+  }, [triviaIndex]);
+
+  // Handle trivia answer
+  const handleTriviaAnswer = useCallback(() => {
+    setCurrentTrivia(null);
+    setIsPaused(false);
+    setTriviaIndex(prev => prev + 1);
+  }, []);
+
   // Check collision with hearts
   const checkHeartCollision = useCallback((px: number, py: number) => {
+    if (collectionPause || isPaused) return;
+    
     setHearts(prevHearts => {
       let collected = false;
       const newHearts = prevHearts.map(heart => {
@@ -101,47 +208,86 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
       });
       
       if (collected) {
-        setCollectedCount(prev => prev + 1);
+        // Brief pause after collection
+        setCollectionPause(true);
+        setTimeout(() => {
+          setCollectionPause(false);
+          setCollectedCount(prev => {
+            const newCount = prev + 1;
+            // Show trivia after each heart
+            setTimeout(() => showTrivia(), 100);
+            return newCount;
+          });
+        }, 250);
       }
       
       return newHearts;
     });
-  }, [spawnSparkle]);
+  }, [spawnSparkle, showTrivia, collectionPause, isPaused]);
 
-  // Game loop
+  // Game loop with step-based movement
   useEffect(() => {
-    const gameLoop = () => {
+    const gameLoop = (timestamp: number) => {
+      if (isPaused || collectionPause) {
+        setIsMoving(false);
+        gameLoopRef.current = requestAnimationFrame(gameLoop);
+        return;
+      }
+
+      const timeSinceLastMove = timestamp - lastMoveTime.current;
+      
       let dx = 0;
       let dy = 0;
-      let newDirection: Direction = 'idle';
+      let newDirection: Direction = direction;
+      let moving = false;
 
-      if (keysPressed.current.has('ArrowUp') || keysPressed.current.has('w')) {
-        dy = -MOVE_SPEED;
+      // Check pressed keys
+      const up = keysPressed.current.has('ArrowUp') || keysPressed.current.has('w') || keysPressed.current.has('W');
+      const down = keysPressed.current.has('ArrowDown') || keysPressed.current.has('s') || keysPressed.current.has('S');
+      const left = keysPressed.current.has('ArrowLeft') || keysPressed.current.has('a') || keysPressed.current.has('A');
+      const right = keysPressed.current.has('ArrowRight') || keysPressed.current.has('d') || keysPressed.current.has('D');
+
+      if (up) {
+        dy = -1;
         newDirection = 'up';
-      }
-      if (keysPressed.current.has('ArrowDown') || keysPressed.current.has('s')) {
-        dy = MOVE_SPEED;
+        moving = true;
+      } else if (down) {
+        dy = 1;
         newDirection = 'down';
+        moving = true;
       }
-      if (keysPressed.current.has('ArrowLeft') || keysPressed.current.has('a')) {
-        dx = -MOVE_SPEED;
+      
+      if (left) {
+        dx = -1;
         newDirection = 'left';
-      }
-      if (keysPressed.current.has('ArrowRight') || keysPressed.current.has('d')) {
-        dx = MOVE_SPEED;
+        moving = true;
+      } else if (right) {
+        dx = 1;
         newDirection = 'right';
+        moving = true;
       }
 
-      if (dx !== 0 || dy !== 0) {
+      // Normalize diagonal movement
+      if (dx !== 0 && dy !== 0) {
+        const normalize = 1 / Math.sqrt(2);
+        dx *= normalize;
+        dy *= normalize;
+      }
+
+      // Step-based movement with timing
+      if (moving && timeSinceLastMove >= STEP_INTERVAL) {
         setPlayerPos(prev => {
-          const newX = Math.max(0, Math.min(GAME_WIDTH - CHARACTER_SIZE, prev.x + dx));
-          const newY = Math.max(0, Math.min(GAME_HEIGHT - CHARACTER_SIZE, prev.y + dy));
+          const newX = Math.max(0, Math.min(GAME_WIDTH - CHARACTER_SIZE, prev.x + dx * STEP_SIZE));
+          const newY = Math.max(0, Math.min(GAME_HEIGHT - CHARACTER_SIZE, prev.y + dy * STEP_SIZE));
           checkHeartCollision(newX, newY);
           return { x: newX, y: newY };
         });
+        lastMoveTime.current = timestamp;
       }
 
       setDirection(newDirection);
+      setIsMoving(moving);
+      
       gameLoopRef.current = requestAnimationFrame(gameLoop);
     };
 
@@ -151,12 +297,13 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
         cancelAnimationFrame(gameLoopRef.current);
       }
     };
-  }, [checkHeartCollision]);
+  }, [checkHeartCollision, direction, isPaused, collectionPause]);
 
   // Keyboard handlers
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'].includes(e.key)) {
+      const keys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D'];
+      if (keys.includes(e.key)) {
         e.preventDefault();
         keysPressed.current.add(e.key);
       }
@@ -164,6 +311,9 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
 
     const handleKeyUp = (e: KeyboardEvent) => {
       keysPressed.current.delete(e.key);
+      // Also clear the uppercase/lowercase variant
+      keysPressed.current.delete(e.key.toLowerCase());
+      keysPressed.current.delete(e.key.toUpperCase());
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -176,13 +326,13 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
 
   // Check completion
   useEffect(() => {
-    if (collectedCount >= requiredHearts && !isComplete) {
+    if (collectedCount >= requiredHearts && !isComplete && !isPaused) {
       setIsComplete(true);
       setTimeout(() => {
         onComplete();
       }, 1500);
     }
-  }, [collectedCount, requiredHearts, isComplete, onComplete]);
+  }, [collectedCount, requiredHearts, isComplete, onComplete, isPaused]);
 
   return (
     <div className={`min-h-screen flex flex-col items-center justify-center p-4 transition-opacity duration-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
@@ -195,7 +345,10 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
 
       {/* Game area */}
       <div 
-        className={`game-area relative transition-all duration-1000 ${isComplete ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+        className={`game-area relative transition-all duration-500 ${
+          isComplete ? 'opacity-0 scale-95' : 
+          isPaused ? 'opacity-50' : 'opacity-100 scale-100'
+        }`}
         style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}
       >
         {/* Hearts */}
@@ -211,6 +364,7 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
               width: HEART_SIZE,
               height: HEART_SIZE,
               animationDelay: `${heart.id * 0.2}s`,
+              imageRendering: 'pixelated',
             }}
           />
         ))}
@@ -227,7 +381,7 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
               height: HEART_SIZE,
             }}
           >
-            <span className="text-2xl">✨</span>
+            <span className="text-3xl">✨</span>
           </div>
         ))}
 
@@ -235,7 +389,7 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
         <img
           src={getCharacterSprite()}
           alt="Character"
-          className="absolute"
+          className="absolute transition-none"
           style={{
             left: playerPos.x,
             top: playerPos.y,
@@ -246,6 +400,14 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
         />
       </div>
 
+      {/* Trivia Dialog */}
+      {currentTrivia && (
+        <TriviaDialog 
+          question={currentTrivia} 
+          onAnswer={handleTriviaAnswer}
+        />
+      )}
+
       {/* Controls hint */}
       <div className="mt-4 text-[10px] text-muted-foreground text-center">
         <p>Use arrow keys or WASD to move</p>
@@ -253,7 +415,7 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
 
       {/* Completion message */}
       {isComplete && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+        <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-30">
           <div className="pixel-panel animate-bounce-in">
             <p className="text-sm text-primary pixel-text">All hearts collected! 💖</p>
           </div>

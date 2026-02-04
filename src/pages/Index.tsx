@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import LandingScreen from '@/components/game/LandingScreen';
 import HeartGame from '@/components/game/HeartGame';
-import TriviaSection from '@/components/game/TriviaSection';
 import FinalReveal from '@/components/game/FinalReveal';
 
-type GameStage = 'landing' | 'game' | 'trivia' | 'reveal';
+type GameStage = 'landing' | 'game' | 'reveal';
 
 const Index = () => {
   const [stage, setStage] = useState<GameStage>('landing');
@@ -26,13 +25,9 @@ const Index = () => {
       
       {stage === 'game' && (
         <HeartGame 
-          onComplete={() => transitionTo('trivia')} 
+          onComplete={() => transitionTo('reveal')} 
           requiredHearts={8}
         />
-      )}
-      
-      {stage === 'trivia' && (
-        <TriviaSection onComplete={() => transitionTo('reveal')} />
       )}
       
       {stage === 'reveal' && (
