@@ -9,6 +9,8 @@ import characterWalkSouth from '@/assets/character-walk-south.gif';
 import characterWalkEast from '@/assets/character-walk-east.gif';
 import characterWalkWest from '@/assets/character-walk-west.gif';
 import TriviaDialog from './TriviaDialog';
+import TouchControls from './TouchControls';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HeartGameProps {
   onComplete: () => void;
@@ -106,7 +108,9 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
   const [currentTrivia, setCurrentTrivia] = useState<TriviaQuestion | null>(null);
   const [triviaIndex, setTriviaIndex] = useState(0);
   const [collectionPause, setCollectionPause] = useState(false);
+  const [touchDirections, setTouchDirections] = useState({ up: false, down: false, left: false, right: false });
   
+  const isMobile = useIsMobile();
   const keysPressed = useRef<Set<string>>(new Set());
   const lastMoveTime = useRef<number>(0);
   const gameLoopRef = useRef<number>();
@@ -241,11 +245,11 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
       let newDirection: Direction = direction;
       let moving = false;
 
-      // Check pressed keys
-      const up = keysPressed.current.has('ArrowUp') || keysPressed.current.has('w') || keysPressed.current.has('W');
-      const down = keysPressed.current.has('ArrowDown') || keysPressed.current.has('s') || keysPressed.current.has('S');
-      const left = keysPressed.current.has('ArrowLeft') || keysPressed.current.has('a') || keysPressed.current.has('A');
-      const right = keysPressed.current.has('ArrowRight') || keysPressed.current.has('d') || keysPressed.current.has('D');
+      // Check pressed keys OR touch directions
+      const up = keysPressed.current.has('ArrowUp') || keysPressed.current.has('w') || keysPressed.current.has('W') || touchDirections.up;
+      const down = keysPressed.current.has('ArrowDown') || keysPressed.current.has('s') || keysPressed.current.has('S') || touchDirections.down;
+      const left = keysPressed.current.has('ArrowLeft') || keysPressed.current.has('a') || keysPressed.current.has('A') || touchDirections.left;
+      const right = keysPressed.current.has('ArrowRight') || keysPressed.current.has('d') || keysPressed.current.has('D') || touchDirections.right;
 
       if (up) {
         dy = -1;
@@ -297,7 +301,7 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
         cancelAnimationFrame(gameLoopRef.current);
       }
     };
-  }, [checkHeartCollision, direction, isPaused, collectionPause]);
+  }, [checkHeartCollision, direction, isPaused, collectionPause, touchDirections]);
 
   // Keyboard handlers
   useEffect(() => {
@@ -408,9 +412,14 @@ const HeartGame = ({ onComplete, requiredHearts = 8 }: HeartGameProps) => {
         />
       )}
 
+      {/* Touch Controls for mobile */}
+      {isMobile && (
+        <TouchControls onDirectionChange={setTouchDirections} />
+      )}
+
       {/* Controls hint */}
       <div className="mt-4 text-[10px] text-muted-foreground text-center">
-        <p>Use arrow keys or WASD to move</p>
+        <p>{isMobile ? 'Use the D-pad to move' : 'Use arrow keys or WASD to move'}</p>
       </div>
 
       {/* Completion message */}
