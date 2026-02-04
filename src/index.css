@@ -2,87 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Pixel Art Valentine Design System */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Valentine Pastel Palette */
+    --background: 30 40% 96%;
+    --foreground: 350 30% 25%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 350 60% 95%;
+    --card-foreground: 350 30% 25%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 30 40% 98%;
+    --popover-foreground: 350 30% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Rose Pink - Main brand color */
+    --primary: 350 70% 65%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Peach - Secondary warmth */
+    --secondary: 20 80% 85%;
+    --secondary-foreground: 350 30% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Lavender - Accent */
+    --accent: 280 50% 80%;
+    --accent-foreground: 280 40% 25%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --muted: 350 30% 90%;
+    --muted-foreground: 350 20% 50%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 350 40% 85%;
+    --input: 350 40% 90%;
+    --ring: 350 70% 65%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Custom Valentine colors */
+    --valentine-pink: 350 70% 65%;
+    --valentine-rose: 340 65% 55%;
+    --valentine-peach: 20 85% 82%;
+    --valentine-lavender: 280 50% 80%;
+    --valentine-cream: 30 40% 96%;
+    --valentine-blush: 350 60% 92%;
+    
+    /* Pixel art specific */
+    --pixel-border: 350 40% 45%;
+    --pixel-shadow: 350 30% 35%;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 350 30% 12%;
+    --foreground: 350 20% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 350 25% 15%;
+    --card-foreground: 350 20% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 350 25% 15%;
+    --popover-foreground: 350 20% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 350 70% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 20 60% 30%;
+    --secondary-foreground: 20 80% 90%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 280 40% 40%;
+    --accent-foreground: 280 30% 95%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --muted: 350 20% 20%;
+    --muted-foreground: 350 15% 65%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 350 20% 25%;
+    --input: 350 20% 25%;
+    --ring: 350 70% 60%;
+
+    --valentine-pink: 350 65% 55%;
+    --valentine-rose: 340 60% 45%;
+    --valentine-peach: 20 70% 45%;
+    --valentine-lavender: 280 45% 50%;
+    --valentine-cream: 30 20% 18%;
+    --valentine-blush: 350 40% 25%;
+    
+    --pixel-border: 350 30% 60%;
+    --pixel-shadow: 350 20% 10%;
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -101,5 +120,270 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Press Start 2P', cursive;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+}
+
+@layer components {
+  /* Pixel Panel - Base UI container */
+  .pixel-panel {
+    @apply relative p-6;
+    background: hsl(var(--card));
+    border: 4px solid hsl(var(--pixel-border));
+    border-radius: 8px;
+    box-shadow: 
+      4px 4px 0 0 hsl(var(--pixel-shadow)),
+      inset -2px -2px 0 0 hsl(var(--pixel-border) / 0.3),
+      inset 2px 2px 0 0 hsl(0 0% 100% / 0.3);
+  }
+
+  /* Pixel Button */
+  .pixel-button {
+    @apply px-6 py-3 font-bold text-sm cursor-pointer transition-transform;
+    font-family: 'Press Start 2P', cursive;
+    background: linear-gradient(
+      180deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--valentine-rose)) 100%
+    );
+    color: hsl(var(--primary-foreground));
+    border: 3px solid hsl(var(--pixel-border));
+    border-radius: 4px;
+    box-shadow: 
+      3px 3px 0 0 hsl(var(--pixel-shadow)),
+      inset -1px -1px 0 0 hsl(var(--valentine-rose)),
+      inset 1px 1px 0 0 hsl(0 0% 100% / 0.4);
+    text-shadow: 1px 1px 0 hsl(var(--pixel-shadow));
+  }
+
+  .pixel-button:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 
+      4px 4px 0 0 hsl(var(--pixel-shadow)),
+      inset -1px -1px 0 0 hsl(var(--valentine-rose)),
+      inset 1px 1px 0 0 hsl(0 0% 100% / 0.4);
+  }
+
+  .pixel-button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 
+      1px 1px 0 0 hsl(var(--pixel-shadow)),
+      inset -1px -1px 0 0 hsl(var(--valentine-rose)),
+      inset 1px 1px 0 0 hsl(0 0% 100% / 0.4);
+  }
+
+  /* Game Area */
+  .game-area {
+    @apply relative overflow-hidden;
+    background: 
+      repeating-linear-gradient(
+        0deg,
+        hsl(var(--valentine-cream)) 0px,
+        hsl(var(--valentine-cream)) 16px,
+        hsl(var(--valentine-blush)) 16px,
+        hsl(var(--valentine-blush)) 32px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        hsl(var(--valentine-cream)) 0px,
+        hsl(var(--valentine-cream)) 16px,
+        hsl(var(--valentine-blush)) 16px,
+        hsl(var(--valentine-blush)) 32px
+      );
+    background-blend-mode: multiply;
+    border: 4px solid hsl(var(--pixel-border));
+    border-radius: 8px;
+    box-shadow: 
+      inset 0 0 20px hsl(var(--valentine-rose) / 0.1),
+      4px 4px 0 0 hsl(var(--pixel-shadow));
+  }
+
+  /* Dialogue Box */
+  .dialogue-box {
+    @apply relative p-6;
+    background: hsl(var(--valentine-cream));
+    border: 4px solid hsl(var(--pixel-border));
+    border-radius: 8px;
+    box-shadow: 
+      4px 4px 0 0 hsl(var(--pixel-shadow)),
+      inset 0 0 0 2px hsl(var(--valentine-peach) / 0.5);
+  }
+
+  .dialogue-box::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    border: 2px dashed hsl(var(--valentine-rose) / 0.3);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  /* Answer Option */
+  .answer-option {
+    @apply w-full p-4 text-left text-xs cursor-pointer transition-all;
+    font-family: 'Press Start 2P', cursive;
+    background: hsl(var(--valentine-blush));
+    border: 3px solid hsl(var(--border));
+    border-radius: 4px;
+    color: hsl(var(--foreground));
+  }
+
+  .answer-option:hover {
+    background: hsl(var(--valentine-peach));
+    border-color: hsl(var(--valentine-rose));
+    transform: translateX(4px);
+  }
+
+  .answer-option.correct {
+    background: hsl(140 60% 80%);
+    border-color: hsl(140 60% 40%);
+  }
+
+  .answer-option.incorrect {
+    background: hsl(var(--valentine-rose) / 0.3);
+    border-color: hsl(var(--valentine-rose));
+  }
+}
+
+@layer utilities {
+  /* Pixel text rendering */
+  .pixel-text {
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 2px 2px 0 hsl(var(--pixel-shadow) / 0.3);
+  }
+
+  /* Floating animation for hearts */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-8px) rotate(-3deg);
+    }
+    75% {
+      transform: translateY(-4px) rotate(3deg);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Sparkle animation */
+  @keyframes sparkle {
+    0%, 100% {
+      opacity: 0;
+      transform: scale(0) rotate(0deg);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1) rotate(180deg);
+    }
+  }
+
+  .animate-sparkle {
+    animation: sparkle 0.6s ease-out forwards;
+  }
+
+  /* Pulse glow */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 10px hsl(var(--valentine-pink) / 0.5);
+    }
+    50% {
+      box-shadow: 0 0 25px hsl(var(--valentine-pink) / 0.8);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Typewriter effect */
+  @keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  .animate-typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typewriter 2s steps(30) forwards;
+  }
+
+  /* Confetti fall */
+  @keyframes confetti-fall {
+    0% {
+      transform: translateY(-100vh) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  .animate-confetti {
+    animation: confetti-fall 4s linear forwards;
+  }
+
+  /* Bounce in */
+  @keyframes bounce-in {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-bounce-in {
+    animation: bounce-in 0.5s ease-out forwards;
+  }
+
+  /* Slide up fade */
+  @keyframes slide-up-fade {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up-fade 0.6s ease-out forwards;
+  }
+
+  /* Heart beat */
+  @keyframes heart-beat {
+    0%, 100% {
+      transform: scale(1);
+    }
+    25% {
+      transform: scale(1.1);
+    }
+    50% {
+      transform: scale(1);
+    }
+    75% {
+      transform: scale(1.15);
+    }
+  }
+
+  .animate-heart-beat {
+    animation: heart-beat 1s ease-in-out infinite;
   }
 }
