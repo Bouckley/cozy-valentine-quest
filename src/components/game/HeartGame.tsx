@@ -60,7 +60,7 @@ const triviaQuestions: TriviaQuestion[] = [
   },
   {
     question: "Why was our first date insane?",
-    options: ["I broguht whole wheat flour", "We watched my favourite movie Ponyo", "You brought me on a triple date", "All of the above!"],
+    options: ["I brought whole wheat flour", "We watched my favourite movie Ponyo", "You brought me on a triple date", "All of the above!"],
     correctIndex: 3,
   },
   {
