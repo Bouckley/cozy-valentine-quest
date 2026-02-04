@@ -39,10 +39,10 @@ const TriviaDialog = ({ question, onAnswer }: TriviaDialogProps) => {
   const getFeedbackMessage = () => {
     if (!showFeedback) return '';
     if (isCorrect) {
-      const messages = ["You know me so well! 💕", "Perfect! 💖", "That's right! 💘", "Exactly! 💗"];
+      const messages = ["YESSIIRRRRR", "Nice!", "Correct!", "DING DING DING"];
       return messages[Math.floor(Math.random() * messages.length)];
     }
-    const messages = ["Close enough! 💕", "I still love you! 💖", "Nice try! 💘", "You're adorable! 💗"];
+    const messages = ["QUIT DIGGIN IN YO BUTT", "Brotha cmon lockin", "LOOOOOOOL", "Next time!"];
     return messages[Math.floor(Math.random() * messages.length)];
   };
 
