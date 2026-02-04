@@ -50,42 +50,42 @@ const STEP_INTERVAL = 60; // ms between steps
 const triviaQuestions: TriviaQuestion[] = [
   {
     question: "Where was our first date?",
-    options: ["Coffee shop downtown", "The park by the lake", "That cozy restaurant", "Movie theater"],
+    options: ["Skating at Victoria Park", "Stages", "Your House", "The Arc Gym"],
     correctIndex: 2,
   },
   {
     question: "Who said 'I love you' first?",
-    options: ["You did 💕", "I did 💖", "We said it together", "We haven't yet!"],
+    options: ["You did!", "I did!", "We said it together", "Technically someone said it by squeezing hands..."],
+    correctIndex: 3,
+  },
+  {
+    question: "Why was our first date insane?",
+    options: ["I broguht whole wheat flour", "We watched my favourite movie Ponyo", "You brought me on a triple date", "All of the above!"],
+    correctIndex: 3,
+  },
+  {
+    question: "What pastry did I leave on your window sill?",
+    options: ["Pastel de Nata", "Chocolate Chip Cookies", "Macaron", "Churros"],
     correctIndex: 0,
   },
   {
-    question: "What's our favorite thing to do together?",
-    options: ["Watch movies", "Cook dinner", "Go on walks", "Play games"],
+    question: "What's our song?",
+    options: ["You're the Inspiration", "White Ferrari", "Cotton Eye Joe", "Die Trying"],
     correctIndex: 1,
   },
   {
-    question: "Which of these reminds you of me most?",
-    options: ["Warm hugs", "Silly jokes", "Late night talks", "All of the above 💘"],
-    correctIndex: 3,
-  },
-  {
-    question: "What's our song?",
-    options: ["That one we danced to", "The one from our road trip", "We don't have one yet", "Every song is ours 💕"],
-    correctIndex: 3,
-  },
-  {
-    question: "What makes our time together special?",
-    options: ["The laughter", "The comfort", "The adventures", "Everything 💖"],
-    correctIndex: 3,
+    question: "What day is our Anniversary?",
+    options: ["March 2nd", "February 24th", "February 25th", "Same as Valentine's Day"],
+    correctIndex: 2,
   },
   {
     question: "What's my favorite thing about you?",
-    options: ["Your smile", "Your kindness", "Your sense of humor", "Everything! 💘"],
+    options: ["Your smile", "Your beautiful eyes", "Your odd sense of humour", "Everything!"],
     correctIndex: 3,
   },
   {
-    question: "How do you make me feel?",
-    options: ["Happy", "Safe", "Loved", "All of the above 💕"],
+    question: "How much do I miss you?",
+    options: ["meh", "a lil", "so much", "I MISS YOU 1,000,000!!!"],
     correctIndex: 3,
   },
 ];
